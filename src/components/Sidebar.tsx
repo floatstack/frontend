@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 const navItems = [
   { to: "/", icon: Home, label: "Dashboard" },
   { to: "/agents", icon: Users, label: "Agent Management" },
-  { to: "/liquidity", icon: Gauge, label: "Liquidity Monitor", badge: "10" },
+  { to: "/liquidity", icon: Gauge, label: "Liquidity Monitor", },
   { to: "/atm", icon: Zap, label: "ATM Monitor" },
   { to: "/compliance", icon: FileText, label: "Compliance and Report" },
 ];
@@ -51,11 +51,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
           >
             <item.icon className="w-4 h-4" />
             <span className="flex-1">{item.label}</span>
-            {item.badge && (
-              <span className="px-2 py-0.5 text-xs rounded-full bg-muted text-muted-foreground">
-                {item.badge}
-              </span>
-            )}
+            
           </NavLink>
         ))}
       </nav>
