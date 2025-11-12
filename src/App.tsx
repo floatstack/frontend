@@ -11,6 +11,8 @@ import LiquidityMonitor from "./pages/LiquidityMonitor";
 import ATMMonitor from "./pages/ATMMonitor";
 import Compliance from "./pages/Compliance";
 import NotFound from "./pages/NotFound";
+import { AuthProvider } from "./components/context/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -19,18 +21,62 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/agents" element={<AgentManagement />} />
-          <Route path="/agents/onboard" element={<AgentOnboarding />} />
-          <Route path="/liquidity" element={<LiquidityMonitor />} />
-          <Route path="/atm" element={<ATMMonitor />} />
-          <Route path="/compliance" element={<Compliance />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+      <AuthProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/agents"
+              element={
+                <ProtectedRoute>
+                  <AgentManagement />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/agents/onboard"
+              element={
+                <ProtectedRoute>
+                  <AgentOnboarding />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/liquidity"
+              element={
+                <ProtectedRoute>
+                  <LiquidityMonitor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/atm"
+              element={
+                <ProtectedRoute>
+                  <ATMMonitor />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/compliance"
+              element={
+                <ProtectedRoute>
+                  <Compliance />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>
 );

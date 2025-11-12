@@ -6,6 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Mail, Eye, EyeOff } from "lucide-react";
 import Logo from "@/components/Logo";
+import { useAuth } from "@/components/context/AuthContext";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -13,10 +14,23 @@ const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const { login, isLoading } = useAuth();
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // For demo purposes, just navigate to dashboard
-    navigate("/");
+   
+
+    try {
+     const res = await login(email, password);
+
+     if(res.status){
+        sessionStorage.setItem("access_token", res?.data?.access_token);
+        navigate("/");
+     }
+      
+    } catch (error) {
+      console.log(error, "error");
+    }
   };
 
   return (
@@ -25,10 +39,12 @@ const Login = () => {
         <div className="mb-8 flex justify-center">
           <Logo />
         </div>
-        
+
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold mb-2">Log In</h1>
-          <p className="text-muted-foreground">Enter your credentials to access your account</p>
+          <p className="text-muted-foreground">
+            Enter your credentials to access your account
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -65,7 +81,11 @@ const Login = () => {
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                {showPassword ? (
+                  <EyeOff className="w-4 h-4" />
+                ) : (
+                  <Eye className="w-4 h-4" />
+                )}
               </button>
             </div>
           </div>
@@ -86,13 +106,13 @@ const Login = () => {
           </div>
 
           <Button type="submit" className="w-full">
-            Log into Account
+            {isLoading ? "Signing in..." : "Sign In"}
           </Button>
 
           <p className="text-center text-sm text-muted-foreground">
-            Are you new here?{" "}
+            Are you having problem here?{" "}
             <a href="#" className="text-primary hover:underline">
-              Create Account
+              Contact us or your administrator.
             </a>
           </p>
         </form>
