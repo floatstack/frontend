@@ -5,19 +5,36 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import StateLga from "@/lib/state&lga.json";
 
 const AgentOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedLga, setSelectedLga] = useState("");
   const navigate = useNavigate();
 
   const steps = [
     { id: 1, title: "Basic Info", description: "" },
-    { id: 2, title: "Identity Verification", description: "Verify agent identity" },
-    { id: 3, title: "Risk Assessment", description: "Setup your customer journey flow" },
+    {
+      id: 2,
+      title: "Identity Verification",
+      description: "Verify agent identity",
+    },
+    {
+      id: 3,
+      title: "Risk Assessment",
+      description: "Setup your customer journey flow",
+    },
   ];
 
   const handleNext = () => {
@@ -44,45 +61,109 @@ const AgentOnboarding = () => {
               {currentStep === 1 && (
                 <div className="space-y-6">
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">Agent Onboarding</h1>
-                    <p className="text-muted-foreground">Complete KYA/KYC verification process</p>
+                    <h1 className="text-3xl font-bold mb-2">
+                      Agent Onboarding
+                    </h1>
+                    <p className="text-muted-foreground">
+                      Complete KYA/KYC verification process
+                    </p>
                   </div>
 
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="fullName">Full Name</Label>
-                      <Input id="fullName" placeholder="Enter Name" className="mt-1.5" />
+                      <Input
+                        id="fullName"
+                        placeholder="Enter Name"
+                        className="mt-1.5"
+                      />
                     </div>
 
                     <div>
                       <Label htmlFor="agentId">Agent ID</Label>
-                      <Input id="agentId" placeholder="Enter ID" className="mt-1.5" />
+                      <Input
+                        id="agentId"
+                        placeholder="Enter ID"
+                        className="mt-1.5"
+                      />
                     </div>
 
                     <div>
                       <Label htmlFor="terminalId">Terminal ID</Label>
-                      <Input id="terminalId" placeholder="Enter ID" className="mt-1.5" />
+                      <Input
+                        id="terminalId"
+                        placeholder="Enter ID"
+                        className="mt-1.5"
+                      />
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <Label htmlFor="phone">Phone Number</Label>
-                        <Input id="phone" placeholder="070xxxxxx" className="mt-1.5" />
+                        <Input
+                          id="phone"
+                          placeholder="070xxxxxx"
+                          className="mt-1.5"
+                        />
                       </div>
                       <div>
                         <Label htmlFor="email">Email</Label>
-                        <Input id="email" type="email" placeholder="Anne@example.com" className="mt-1.5" />
+                        <Input
+                          id="email"
+                          type="email"
+                          placeholder="Anne@example.com"
+                          className="mt-1.5"
+                        />
                       </div>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <Label htmlFor="lga">LGA</Label>
-                        <Input id="lga" placeholder="" className="mt-1.5" />
+                        <Label htmlFor="state">State</Label>
+                        <Select
+                          value={selectedState}
+                          onValueChange={(state) => {
+                            setSelectedState(state);
+                            setSelectedLga(""); // reset LGA
+                          }}
+                        >
+                          <SelectTrigger className="w-full mt-1.5">
+                            <SelectValue placeholder="Select state" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {StateLga.states.map((state) => (
+                              <SelectItem key={state} value={state}>
+                                {state}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                       <div>
-                        <Label htmlFor="state">State</Label>
-                        <Input id="state" placeholder="" className="mt-1.5" />
+                        <Label htmlFor="lga">LGA</Label>
+                        <Select
+                          value={selectedLga}
+                          onValueChange={setSelectedLga}
+                          disabled={!selectedState}
+                        >
+                          <SelectTrigger className="w-full mt-1.5">
+                            <SelectValue
+                              placeholder={
+                                selectedState
+                                  ? "Select LGA"
+                                  : "Select state first"
+                              }
+                            />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {selectedState &&
+                              StateLga[selectedState]?.map((lga: string) => (
+                                <SelectItem key={lga} value={lga}>
+                                  {lga}
+                                </SelectItem>
+                              ))}
+                          </SelectContent>
+                        </Select>
                       </div>
                     </div>
 
@@ -98,14 +179,19 @@ const AgentOnboarding = () => {
               {currentStep === 2 && (
                 <div className="space-y-6">
                   <div>
-                    <h1 className="text-3xl font-bold mb-2">Identity Verification</h1>
-                    <p className="text-muted-foreground">Complete KYA/KYC verification process</p>
+                    <h1 className="text-3xl font-bold mb-2">
+                      Identity Verification
+                    </h1>
+                    <p className="text-muted-foreground">
+                      Complete KYA/KYC verification process
+                    </p>
                   </div>
 
                   <Alert className="border-destructive/50 bg-destructive/5">
                     <AlertCircle className="h-5 w-5 text-destructive" />
                     <AlertDescription className="text-foreground ml-2">
-                      We'll verify your identity using BVN and NIN through secure API connections to NIBSS and NIMC.
+                      We'll verify your identity using BVN and NIN through
+                      secure API connections to NIBSS and NIMC.
                     </AlertDescription>
                   </Alert>
 
@@ -113,9 +199,13 @@ const AgentOnboarding = () => {
                     <div>
                       <Label htmlFor="nin">NiN</Label>
                       <div className="relative mt-1.5">
-                        <Input id="nin" placeholder="Enter ID" className="pr-20" />
-                        <Button 
-                          variant="link" 
+                        <Input
+                          id="nin"
+                          placeholder="Enter ID"
+                          className="pr-20"
+                        />
+                        <Button
+                          variant="link"
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:no-underline"
                         >
                           Verify
@@ -126,9 +216,13 @@ const AgentOnboarding = () => {
                     <div>
                       <Label htmlFor="bvn">BVN</Label>
                       <div className="relative mt-1.5">
-                        <Input id="bvn" placeholder="Enter ID" className="pr-20" />
-                        <Button 
-                          variant="link" 
+                        <Input
+                          id="bvn"
+                          placeholder="Enter ID"
+                          className="pr-20"
+                        />
+                        <Button
+                          variant="link"
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:no-underline"
                         >
                           Verify
@@ -144,36 +238,54 @@ const AgentOnboarding = () => {
                 <div className="space-y-6">
                   <div>
                     <h1 className="text-3xl font-bold mb-2">Risk Assessment</h1>
-                    <p className="text-muted-foreground">Complete KYA/KYC verification process</p>
+                    <p className="text-muted-foreground">
+                      Complete KYA/KYC verification process
+                    </p>
                   </div>
 
                   <Alert className="border-destructive/50 bg-destructive/5">
                     <AlertCircle className="h-5 w-5 text-destructive" />
                     <AlertDescription className="text-foreground ml-2">
-                      All verification steps completed. Our risk engine is analyzing the agent profile.
+                      All verification steps completed. Our risk engine is
+                      analyzing the agent profile.
                     </AlertDescription>
                   </Alert>
 
                   <div className="space-y-3">
                     <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-                      <span className="text-foreground">Credit Bureau Check</span>
-                      <Badge variant="default" className="bg-success hover:bg-success/90">
+                      <span className="text-foreground">
+                        Credit Bureau Check
+                      </span>
+                      <Badge
+                        variant="default"
+                        className="bg-success hover:bg-success/90"
+                      >
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Passed
                       </Badge>
                     </div>
 
                     <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-                      <span className="text-foreground">CBN Watchlist Screening</span>
-                      <Badge variant="default" className="bg-success hover:bg-success/90">
+                      <span className="text-foreground">
+                        CBN Watchlist Screening
+                      </span>
+                      <Badge
+                        variant="default"
+                        className="bg-success hover:bg-success/90"
+                      >
                         <CheckCircle className="w-3 h-3 mr-1" />
                         Clear
                       </Badge>
                     </div>
 
                     <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg">
-                      <span className="text-foreground">Fraud History Check</span>
-                      <Badge variant="default" className="bg-success hover:bg-success/90">
+                      <span className="text-foreground">
+                        Fraud History Check
+                      </span>
+                      <Badge
+                        variant="default"
+                        className="bg-success hover:bg-success/90"
+                      >
                         <CheckCircle className="w-3 h-3 mr-1" />
                         No Records
                       </Badge>
@@ -181,7 +293,9 @@ const AgentOnboarding = () => {
                   </div>
 
                   <div className="space-y-2 pt-4">
-                    <Label htmlFor="floatThreshold">Initial Float Threshold</Label>
+                    <Label htmlFor="floatThreshold">
+                      Initial Float Threshold
+                    </Label>
                     <Select>
                       <SelectTrigger className="mt-1.5">
                         <SelectValue placeholder="Select float threshold" />
@@ -193,15 +307,22 @@ const AgentOnboarding = () => {
                         <SelectItem value="200000">₦200,000</SelectItem>
                       </SelectContent>
                     </Select>
-                    <p className="text-sm text-muted-foreground">Recommended threshold not above ₦50,000</p>
+                    <p className="text-sm text-muted-foreground">
+                      Recommended threshold not above ₦50,000
+                    </p>
                   </div>
                 </div>
               )}
 
               {/* Action Buttons */}
               <div className="flex gap-4 mt-8">
-                <Button variant="outline" size="lg" className="flex-1" onClick={handleSaveDraft}>
-                  Save Draft
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="flex-1"
+                  onClick={handleSaveDraft}
+                >
+                  Back
                 </Button>
                 <Button size="lg" className="flex-1" onClick={handleNext}>
                   {currentStep === 3 ? "Complete" : "Next Step"}
@@ -229,11 +350,19 @@ const AgentOnboarding = () => {
                       {step.id}
                     </div>
                     <div className="pt-2">
-                      <div className={`font-semibold ${step.id === currentStep ? "text-foreground" : "text-muted-foreground"}`}>
+                      <div
+                        className={`font-semibold ${
+                          step.id === currentStep
+                            ? "text-foreground"
+                            : "text-muted-foreground"
+                        }`}
+                      >
                         {step.title}
                       </div>
                       {step.description && (
-                        <div className="text-sm text-muted-foreground">{step.description}</div>
+                        <div className="text-sm text-muted-foreground">
+                          {step.description}
+                        </div>
                       )}
                     </div>
                   </div>
