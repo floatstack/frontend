@@ -57,20 +57,7 @@ const Sidebar = ({ isOpen, onClose }: SidebarProps) => {
       </nav>
 
       <div className="p-3 border-t border-sidebar-border">
-        <NavLink
-          to="/settings"
-          className={({ isActive }) =>
-            cn(
-              "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
-              isActive
-                ? "bg-sidebar-active text-sidebar-active-foreground"
-                : "text-sidebar-foreground hover:bg-sidebar-active/50"
-            )
-          }
-        >
-          <Settings className="w-4 h-4" />
-          <span>Settings</span>
-        </NavLink>
+        
 
         <div className="flex items-center gap-3 px-3 py-3 mt-2">
           <div className="w-8 h-8 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-semibold">

@@ -10,7 +10,6 @@ import AgentOnboarding from "./pages/AgentOnboarding";
 import LiquidityMonitor from "./pages/LiquidityMonitor";
 import ATMMonitor from "./pages/ATMMonitor";
 import Compliance from "./pages/Compliance";
-import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,8 +28,6 @@ const App = () => (
           <Route path="/liquidity" element={<LiquidityMonitor />} />
           <Route path="/atm" element={<ATMMonitor />} />
           <Route path="/compliance" element={<Compliance />} />
-          <Route path="/settings" element={<Settings />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

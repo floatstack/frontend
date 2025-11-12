@@ -201,3 +201,38 @@ export const mockAgents: AgentType[] = [
     commissionEarned: "₦180,000",
   },
 ];
+
+
+export const liquidAgents = [
+  { id: "#1248", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Low Float" },
+  { id: "#8945", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Cleared" },
+  { id: "#8946", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Low Float" },
+  { id: "#8957", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Critical" },
+  { id: "#2945", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Routed" },
+  { id: "#5945", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Cleared" },
+  { id: "#2345", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Cleared" },
+];
+
+export const regionalData = [
+  { name: "Lagos", value: 480 },
+  { name: "Abuja", value: 460 },
+  { name: "Ogun", value: 820 },
+  { name: "Rivers", value: 600 },
+  { name: "Enugu", value: 560 },
+  { name: "Delta", value: 380 },
+];
+
+export const distributionData = [
+  { name: "Lagos", value: 180, color: "hsl(38, 92%, 50%)" },
+  { name: "Abuja", value: 350, color: "hsl(142, 71%, 45%)" },
+  { name: "Rivers", value: 340, color: "hsl(0, 84%, 60%)" },
+  { name: "Others", value: 600, color: "hsl(240, 5%, 65%)" },
+];
+
+export const atmCenters = [
+  { id: "#1248", name: "Lagos Island Float Center", region: "Lagos , Nigeria", float: "₦5.63M", status: "High Demand" },
+  { id: "#8945", name: "Abuja Central Hub", region: "Lagos , Nigeria", float: "₦5.63M", status: "Medium Demand" },
+  { id: "#8946", name: "Kano Distribution Point", region: "Lagos , Nigeria", float: "₦5.63M", status: "High Demand" },
+  { id: "#8957", name: "Lagos Island Float Center", region: "Lagos , Nigeria", float: "₦5.63M", status: "Medium Demand" },
+  { id: "#2945", name: "Port Harcourt Branch", region: "Lagos , Nigeria", float: "₦5.63M", status: "Medium Demand" },
+];
