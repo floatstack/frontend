@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Plus, Search, ChevronDown, Eye, X, MapPin, Mail, DollarSign, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { mockAgents } from "@/lib/mockData";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { AgentStatus, AgentType } from "@/types/agentTypes";
 import { useFetchAgent } from "@/hooks/agentRequest";
@@ -15,6 +15,7 @@ import { useFetchAgent } from "@/hooks/agentRequest";
 
 const AgentManagement = () => {
   const navigate = useNavigate();
+    const [isLoading, setIsLoading] = useState(false);
 
   const [statusFilter, setStatusFilter] = useState<AgentStatus>("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,9 +25,17 @@ const AgentManagement = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [selectedAgent, setSelectedAgent] = useState<AgentType | null>(null);
 
-  const {data:fetchAgents, isLoading} = useFetchAgent()
+  const {data:fetchAgents} = useFetchAgent()
 
-  console.log(fetchAgents, 'fetchAgents')
+  
+    useEffect(() => {
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+    }, []);
+
+  // console.log(fetchAgents, 'fetchAgents')
 
   const filteredAgents = useMemo(() => {
     let result = [...mockAgents];
@@ -93,6 +102,11 @@ const AgentManagement = () => {
             New Agent
           </Button>
         </div>
+        {isLoading ? (
+           <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          </div>
+        ): (
 
         <Card className="p-6">
           <div className="flex flex-wrap items-center gap-4 mb-6">
@@ -245,6 +259,8 @@ const AgentManagement = () => {
             </div>
           </div>
         </Card>
+        ) }
+
 
         {selectedAgent && (
           <>

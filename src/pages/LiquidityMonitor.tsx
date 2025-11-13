@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Search, Filter, ArrowUpDown } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { liquidAgents } from "@/lib/mockData";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 
@@ -47,9 +47,17 @@ const LiquidityMonitor = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
   const [sortBy, setSortBy] = useState("none");
+  const [isLoading, setIsLoading] = useState(false);
 
 const parseBalance = (balance: string) =>
   parseFloat(balance.replace(/[₦,]/g, ""));
+
+  useEffect(() => {
+      setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 2000);
+    }, []);
 
 // Derived filtered/sorted list
 const filteredAgents = useMemo(() => {
@@ -99,6 +107,12 @@ const filteredAgents = useMemo(() => {
           <Button>Configure Alert</Button>
         </div>
 
+        {isLoading ? (
+          <div className="flex items-center justify-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          </div>
+        ) : (
+          <>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             title="Total Number of Active Agent"
@@ -233,6 +247,9 @@ const filteredAgents = useMemo(() => {
             </div>
           </div>
         </Card>
+          </>
+
+        )}
       </div>
     </DashboardLayout>
   );

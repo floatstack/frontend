@@ -236,3 +236,34 @@ export const atmCenters = [
   { id: "#8957", name: "Lagos Island Float Center", region: "Lagos , Nigeria", float: "₦5.63M", status: "Medium Demand" },
   { id: "#2945", name: "Port Harcourt Branch", region: "Lagos , Nigeria", float: "₦5.63M", status: "Medium Demand" },
 ];
+
+
+ export const networkData = [
+  { month: "1", value: 50 },
+  { month: "2", value: 80 },
+ { month: "3", value: 100 },
+  { month: "4", value: 120 },
+  { month: "5", value: 150 },
+  { month: "6", value: 180 },
+  { month: "7", value: 220 },
+  { month: "8", value: 280 },
+  { month: "9", value: 350 },
+  { month: "10", value: 500 },
+  { month: "11", value: 700 },
+  { month: "12", value: 900 },
+];
+
+export const atmPerformanceData = [
+  { name: "Lagos", value: 480 },
+  { name: "Abuja", value: 460 },
+  { name: "Ogun", value: 820 },
+  { name: "Rivers", value: 600 },
+  { name: "Enugu", value: 560 },
+  { name: "Delta", value: 380 },
+];
+
+export const burnRateData = [
+  { name: "Low Risk", value: 121799, color: "hsl(142, 71%, 45%)" },
+  { name: "Medium Risk", value: 66734, color: "hsl(38, 92%, 50%)" },
+  { name: "High Risk", value: 21567, color: "hsl(0, 84%, 60%)" },
+];
