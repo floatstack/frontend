@@ -14,7 +14,7 @@ export const useSignIn = () => {
         title: "Login successful",
         description: "You have been logged in successfully",
       });
-      window.location.href = "/login";
+      // window.location.href = "/";
     },
     onError: (error: AxiosError<{ message?: string }>) => {
       toast({
@@ -28,16 +28,16 @@ export const useSignIn = () => {
   });
 };
 
-export const useFetchUserProfile = () => {
-  const access_token = sessionStorage.getItem("access_token");
-  return useQuery({
-    queryKey: ["auth_user"],
-    queryFn: async () => {
-      const response = await axiosInstance.get(`/auth/me`);
-      return response.data;
-    },
-    enabled: !!access_token, // Only run if accessToken exists
-    retry: 1, // Limit retries to avoid infinite loops on failure
-    staleTime: 5 * 60 * 1000,
-  });
-};
+// export const useFetchUserProfile = () => {
+//   const access_token = sessionStorage.getItem("access_token");
+//   return useQuery({
+//     queryKey: ["auth_user"],
+//     queryFn: async () => {
+//       const response = await axiosInstance.get(`/auth/me`);
+//       return response.data;
+//     },
+//     enabled: !!access_token, // Only run if accessToken exists
+//     retry: 1, // Limit retries to avoid infinite loops on failure
+//     staleTime: 5 * 60 * 1000,
+//   });
+// };

@@ -1,4 +1,4 @@
-import { useFetchUserProfile, useSignIn } from "@/hooks/authRequest";
+import {  useSignIn } from "@/hooks/authRequest";
 import { toast } from "@/hooks/use-toast";
 import { AxiosResponse } from "axios";
 import React, { createContext, useContext, useState, useEffect } from "react";
@@ -10,7 +10,6 @@ interface User {
 }
 
 interface AuthContextType {
-  user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<AxiosResponse>;
@@ -30,32 +29,19 @@ export const useAuth = () => {
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { mutateAsync: signInMutation } = useSignIn();
-  const { data: profileData, isLoading: isProfileLoading } =
-    useFetchUserProfile();
+
+
+const accessToken = sessionStorage.getItem("access_token");
 
   useEffect(() => {
-    // Check for stored user data on app load
-    const storedUser = sessionStorage.getItem("user");
-    if (storedUser) {
-      try {
-        setUser(JSON.parse(storedUser));
-      } catch (error) {
-        console.error("Failed to parse stored user:", error);
-        sessionStorage.removeItem("user"); // Clear invalid data
-      }
+    if (accessToken) {
+      setIsLoading(false);
     }
-    setIsLoading(false);
-  }, []);
+  }, [accessToken]);
 
-  useEffect(() => {
-    if (profileData) {
-      setUser(profileData);
-      sessionStorage.setItem("user", JSON.stringify(profileData));
-    }
-  }, [profileData]);
+
 
   const login = async (email: string, password: string) => {
     setIsLoading(true);
@@ -66,9 +52,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
         password,
       });
       if (response.status) {
-        sessionStorage.setItem("access_token", response?.data?.access_token);
-        setUser(profileData);
-        sessionStorage.setItem("user", JSON.stringify(profileData));
+        sessionStorage.setItem(
+          "access_token",
+          response?.data?.data?.authorization?.access_token
+        );
+        sessionStorage.setItem(
+          "refresh_token",
+          response?.data?.data?.authorization?.refresh_token
+        );
       }
       return response;
     } catch (error) {
@@ -87,16 +78,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
 
   const logout = () => {
-    setUser(null);
-    sessionStorage.removeItem("user");
     sessionStorage.removeItem("access_token");
     sessionStorage.clear();
   };
 
+
   const value = {
-    user,
-    isAuthenticated: !!user,
-    isLoading: isLoading || isProfileLoading,
+    isAuthenticated: !!accessToken,
+    isLoading: isLoading,
     login,
     logout,
   };

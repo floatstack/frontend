@@ -23,8 +23,12 @@ const Login = () => {
     try {
      const res = await login(email, password);
 
-     if(res.status){
-        sessionStorage.setItem("access_token", res?.data?.access_token);
+     if(res?.data?.status){
+        sessionStorage.setItem("access_token", res?.data?.data?.authorization?.access_token);
+        sessionStorage.setItem(
+          "refresh_token",
+          res?.data?.data?.authorization?.refresh_token
+        );
         navigate("/");
      }
       

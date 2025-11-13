@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCheck, CheckCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import StateLga from "@/lib/state&lga.json";
 
@@ -21,7 +21,12 @@ const AgentOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedState, setSelectedState] = useState("");
   const [selectedLga, setSelectedLga] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
+  const [isLoadingNin, setIsLoadingNin] = useState(false)
+  const [isLoadingBvn, setIsLoadingBvn] = useState(false)
   const navigate = useNavigate();
+  const [isVerifyNin, setIsVerifyNin] = useState(false)
+  const [isVerifyBvn, setIsVerifyBvn] = useState(false)
 
   const steps = [
     { id: 1, title: "Basic Info", description: "" },
@@ -38,10 +43,18 @@ const AgentOnboarding = () => {
   ];
 
   const handleNext = () => {
+    setIsLoading(true)
     if (currentStep < 3) {
-      setCurrentStep(currentStep + 1);
+      setTimeout(() => {
+        setCurrentStep(currentStep + 1);
+        setIsLoading(false)
+      }, 3000);
     } else {
-      navigate("/agents");
+       setIsLoading(true);
+      setTimeout(() => {
+        setIsLoading(false);
+        navigate("/agents");
+      }, 3000);
     }
   };
 
@@ -206,9 +219,24 @@ const AgentOnboarding = () => {
                         />
                         <Button
                           variant="link"
+                          disabled={isLoadingNin}
+                          onClick={() => {
+                            setIsLoadingNin(true);
+                            setTimeout(() => {
+                              setIsLoadingNin(false);
+                              setIsVerifyNin(true);
+                            }, 3000);
+                          }}
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:no-underline"
                         >
-                          Verify
+                          {isVerifyNin ? (
+                            <CheckCheck className="text-green-500" />
+                          ) : (
+                            "Verify"
+                          )}
+                          {isLoadingNin && (
+                            <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -223,9 +251,25 @@ const AgentOnboarding = () => {
                         />
                         <Button
                           variant="link"
+                          disabled={isLoadingBvn}
+                          onClick={() => {
+                            setIsLoadingBvn(true);
+                            setTimeout(() => {
+                              setIsLoadingBvn(false);
+                              setIsVerifyBvn(true);
+                            }, 3000);
+                          }}
                           className="absolute right-2 top-1/2 -translate-y-1/2 text-primary hover:no-underline"
                         >
-                          Verify
+                          {isVerifyBvn ? (
+                            <CheckCheck className="text-green-500" />
+                          ) : (
+                            "Verify"
+                          )}
+
+                          {isLoadingBvn && (
+                            <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                          )}
                         </Button>
                       </div>
                     </div>
@@ -324,8 +368,20 @@ const AgentOnboarding = () => {
                 >
                   Back
                 </Button>
-                <Button size="lg" className="flex-1" onClick={handleNext}>
-                  {currentStep === 3 ? "Complete" : "Next Step"}
+                <Button
+                  size="lg"
+                  className="flex-1"
+                  disabled={isLoading}
+                  onClick={handleNext}
+                >
+                  {currentStep === 2
+                    ? "Complete Risk Check"
+                    : currentStep === 3
+                    ? "Complete"
+                    : "Next Step"}
+                  {isLoading && (
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                  )}
                 </Button>
               </div>
             </Card>

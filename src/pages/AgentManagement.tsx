@@ -9,6 +9,7 @@ import { mockAgents } from "@/lib/mockData";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { AgentStatus, AgentType } from "@/types/agentTypes";
+import { useFetchAgent } from "@/hooks/agentRequest";
 
 
 
@@ -22,6 +23,10 @@ const AgentManagement = () => {
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [selectedAgent, setSelectedAgent] = useState<AgentType | null>(null);
+
+  const {data:fetchAgents, isLoading} = useFetchAgent()
+
+  console.log(fetchAgents, 'fetchAgents')
 
   const filteredAgents = useMemo(() => {
     let result = [...mockAgents];
