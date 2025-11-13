@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,10 @@ import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCheck, CheckCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import StateLga from "@/lib/state&lga.json";
+import { saveAgent } from "@/lib/localAgentStorage";
+import { AgentType } from "@/types/agentTypes";
+import { toast } from "@/hooks/use-toast";
+import { generateAgentId } from "@/lib/utils";
 
 const AgentOnboarding = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -27,6 +31,12 @@ const AgentOnboarding = () => {
   const navigate = useNavigate();
   const [isVerifyNin, setIsVerifyNin] = useState(false)
   const [isVerifyBvn, setIsVerifyBvn] = useState(false)
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [agentId, setAgentId] = useState("");
+
 
   const steps = [
     { id: 1, title: "Basic Info", description: "" },
@@ -43,25 +53,50 @@ const AgentOnboarding = () => {
   ];
 
   const handleNext = () => {
-    setIsLoading(true)
+    
+    setIsLoading(true);
+
     if (currentStep < 3) {
       setTimeout(() => {
         setCurrentStep(currentStep + 1);
-        setIsLoading(false)
+        setIsLoading(false);
       }, 3000);
     } else {
-       setIsLoading(true);
+      // Simulate agent creation
+      const newAgent: AgentType = {
+        id: "#" + Math.floor(1000 + Math.random() * 9000).toString(),
+        name: fullName, 
+        email,
+        region: `${selectedLga}, ${selectedState}`,
+        balance: "₦200,000",
+        status: "Active",
+        lastActivity: "Just now",
+        joinedDate: new Date().toISOString().split("T")[0],
+        phone,
+        totalTransactions: 0,
+        commissionEarned: "₦0.00",
+        recentTransactions: [],
+      };
+
+      saveAgent(newAgent);
+
       setTimeout(() => {
         setIsLoading(false);
         navigate("/agents");
-      }, 3000);
+      }, 2000);
     }
   };
 
-  const handleSaveDraft = () => {
-    // Handle save draft logic
-    navigate("/agents");
-  };
+ useEffect(() => {
+   if (currentStep === 1 && !agentId) {
+     const newId = generateAgentId();
+     setAgentId(newId);
+   }
+ }, [currentStep]);
+
+    const handleBack = () => {
+      if (currentStep > 1) setCurrentStep(currentStep - 1);
+    };
 
   return (
     <DashboardLayout>
@@ -89,6 +124,8 @@ const AgentOnboarding = () => {
                         id="fullName"
                         placeholder="Enter Name"
                         className="mt-1.5"
+                        value={fullName}
+                        onChange={(e) => setFullName(e.target.value)}
                       />
                     </div>
 
@@ -98,6 +135,8 @@ const AgentOnboarding = () => {
                         id="agentId"
                         placeholder="Enter ID"
                         className="mt-1.5"
+                        value={agentId}
+                        disabled
                       />
                     </div>
 
@@ -117,6 +156,8 @@ const AgentOnboarding = () => {
                           id="phone"
                           placeholder="070xxxxxx"
                           className="mt-1.5"
+                          value={phone}
+                          onChange={(e) => setPhone(e.target.value)}
                         />
                       </div>
                       <div>
@@ -126,6 +167,8 @@ const AgentOnboarding = () => {
                           type="email"
                           placeholder="Anne@example.com"
                           className="mt-1.5"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
                         />
                       </div>
                     </div>
@@ -182,7 +225,13 @@ const AgentOnboarding = () => {
 
                     <div>
                       <Label htmlFor="address">Address</Label>
-                      <Input id="address" placeholder="" className="mt-1.5" />
+                      <Input
+                        id="address"
+                        placeholder=""
+                        className="mt-1.5"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -364,7 +413,7 @@ const AgentOnboarding = () => {
                   variant="outline"
                   size="lg"
                   className="flex-1"
-                  onClick={handleSaveDraft}
+                  onClick={handleBack}
                 >
                   Back
                 </Button>

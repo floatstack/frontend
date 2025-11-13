@@ -1,5 +1,6 @@
-// export type AgentStatus = "Active" | "Low Float" | "Inactive";
-export type AgentStatus = "All" | "Active" | "Low Float";
+export type AgentStatus = "All" | "Active" | "LOW_E_FLOAT" | "CASH_RICH" | "BALANCED"
+// export type AgentStatus = "All" | "Active" | "Low Float";
+
 
 export interface AgentType {
   id: string; 
@@ -22,4 +23,34 @@ export interface AgentTransaction {
   amount: string;
   date: string;
   status: "Successful" | "Pending" | "Failed";
+}
+
+
+export interface BackendAgent {
+  agent_id: string;
+  full_name: string;
+  email: string;
+  region: string | null;
+  e_float: number;
+  assigned_limit: number;
+  status: "LOW_E_FLOAT" | "CASH_RICH" | "BALANCED";
+  confidence: number;
+  last_activity: string;
+  location: string | null;
+}
+
+export interface BackendPagination {
+  page: number;
+  limit: number;
+  total: number;
+}
+
+export interface BackendAgentResponse {
+  status: boolean;
+  statusCode: number;
+  message: string;
+  data: {
+    data: BackendAgent[];
+    pagination: BackendPagination;
+  };
 }

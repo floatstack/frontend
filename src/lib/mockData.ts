@@ -1,63 +1,3 @@
-// import { AgentType } from "@/types/agentTypes";
-
-// export const mockAgents: AgentType[] = [
-//   {
-//     id: "#1248",
-//     name: "Customer Name",
-//     region: "Lagos , Nigeria",
-//     balance: "₦5.63M",
-//     status: "Low Float",
-//     lastActivity: "2 hours ago",
-//   },
-//   {
-//     id: "#8945",
-//     name: "Customer Name",
-//     region: "Lagos , Nigeria",
-//     balance: "₦5.63M",
-//     status: "Active",
-//     lastActivity: "2 hours ago",
-//   },
-//   {
-//     id: "#8946",
-//     name: "Customer Name",
-//     region: "Lagos , Nigeria",
-//     balance: "₦5.63M",
-//     status: "Low Float",
-//     lastActivity: "2 hours ago",
-//   },
-//   {
-//     id: "#8957",
-//     name: "Customer Name",
-//     region: "Lagos , Nigeria",
-//     balance: "₦5.63M",
-//     status: "Active",
-//     lastActivity: "2 hours ago",
-//   },
-//   {
-//     id: "#2945",
-//     name: "Customer Name",
-//     region: "Lagos , Nigeria",
-//     balance: "₦5.63M",
-//     status: "Low Float",
-//     lastActivity: "2 hours ago",
-//   },
-//   {
-//     id: "#5945",
-//     name: "Customer Name",
-//     region: "Lagos , Nigeria",
-//     balance: "₦5.63M",
-//     status: "Active",
-//     lastActivity: "2 hours ago",
-//   },
-//   {
-//     id: "#2345",
-//     name: "Customer Name",
-//     region: "Lagos , Nigeria",
-//     balance: "₦5.63M",
-//     status: "Active",
-//     lastActivity: "2 hours ago",
-//   },
-// ];
 
 
 import { AgentType } from "@/types/agentTypes";
@@ -69,7 +9,7 @@ export const mockAgents: AgentType[] = [
     email: "john.doe@example.com",
     region: "Lagos, Nigeria",
     balance: "₦5.63M",
-    status: "Low Float",
+    status: "LOW_E_FLOAT",
     lastActivity: "2 hours ago",
     joinedDate: "2024-08-21",
     phone: "+2348012345678",
@@ -127,7 +67,7 @@ export const mockAgents: AgentType[] = [
     email: "tunde.ajayi@example.com",
     region: "Lagos, Nigeria",
     balance: "₦2.45M",
-    status: "Low Float",
+    status: "LOW_E_FLOAT",
     lastActivity: "3 hours ago",
     joinedDate: "2023-12-02",
     totalTransactions: 60,
@@ -170,7 +110,7 @@ export const mockAgents: AgentType[] = [
     email: "bayo.fashola@example.com",
     region: "Lagos, Nigeria",
     balance: "₦6.87M",
-    status: "Low Float",
+    status: "LOW_E_FLOAT",
     lastActivity: "1 day ago",
     joinedDate: "2023-09-13",
     totalTransactions: 72,

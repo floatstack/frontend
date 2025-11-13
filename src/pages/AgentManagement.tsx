@@ -9,13 +9,14 @@ import { mockAgents } from "@/lib/mockData";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
 import { AgentStatus, AgentType } from "@/types/agentTypes";
-import { useFetchAgent } from "@/hooks/agentRequest";
+import { mergeAgents, transformAgent, useFetchAgent } from "@/hooks/agentRequest";
+import { getStoredAgents, setAgents } from "@/lib/localAgentStorage";
 
 
 
 const AgentManagement = () => {
   const navigate = useNavigate();
-    const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [statusFilter, setStatusFilter] = useState<AgentStatus>("All");
   const [searchTerm, setSearchTerm] = useState("");
@@ -35,47 +36,68 @@ const AgentManagement = () => {
       }, 2000);
     }, []);
 
-  // console.log(fetchAgents, 'fetchAgents')
 
-  const filteredAgents = useMemo(() => {
-    let result = [...mockAgents];
+useEffect(() => {
+  if (!fetchAgents?.data?.data) return;
 
-    // Filter by status
-    if (statusFilter !== "All") {
-      result = result?.filter((agent) => agent?.status === statusFilter);
-    }
+  const backendAgents = fetchAgents.data.data.map(transformAgent);
+  const localAgents = getStoredAgents();
+if (backendAgents.length === 0) {
+  return;
+}
+  const merged = mergeAgents(backendAgents, localAgents);
 
-    // Search by name or region
-    if (searchTerm.trim() !== "") {
-      const term = searchTerm.toLowerCase();
-      result = result.filter(
-        (agent) =>
-          agent?.name?.toLowerCase()?.includes(term) ||
-          agent?.region?.toLowerCase()?.includes(term)
-      );
-    }
+  setAgents(merged);
+}, [fetchAgents]);
 
-    // Sort
-    result.sort((a, b) => {
-      let valA = a[sortField];
-      let valB = b[sortField];
 
-      if (sortField === "balance") {
-        const parseBalance = (str: string) =>
-          parseFloat(str.replace(/[₦,M]/g, "")) *
-          (str.includes("M") ? 1_000_000 : 1);
-        
-        valA = String(parseBalance(a.balance));
-        valB = String(parseBalance(b.balance));
-      }
 
-      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
-      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
-      return 0;
-    });
 
-    return result;
-  }, [statusFilter, searchTerm, sortField, sortOrder]);
+useEffect(() => {
+  const stored = getStoredAgents();
+  if (stored.length === 0) {
+    setAgents(mockAgents);
+  }
+}, []);
+
+
+const filteredAgents = useMemo(() => {
+  let result = getStoredAgents();
+
+  if (statusFilter !== "All") {
+    result = result.filter((a) => a.status === statusFilter);
+  }
+
+  if (searchTerm.trim() !== "") {
+    const t = searchTerm.toLowerCase();
+    result = result.filter(
+      (a) =>
+        a.name.toLowerCase().includes(t) || a.region.toLowerCase().includes(t)
+    );
+  }
+
+result.sort((a, b) => {
+  const valA =
+    sortField === "balance"
+      ? parseFloat(a.balance.replace(/[₦,]/g, ""))
+      : a[sortField];
+
+  const valB =
+    sortField === "balance"
+      ? parseFloat(b.balance.replace(/[₦,]/g, ""))
+      : b[sortField];
+
+  // Convert to common comparable type
+  const A = typeof valA === "string" ? valA.toLowerCase() : valA;
+  const B = typeof valB === "string" ? valB.toLowerCase() : valB;
+
+  if (A < B) return sortOrder === "asc" ? -1 : 1;
+  if (A > B) return sortOrder === "asc" ? 1 : -1;
+  return 0;
+});
+
+  return result;
+}, [statusFilter, searchTerm, sortField, sortOrder]);
 
   // --- Handlers ---
   const handleSortChange = (field: "name" | "region" | "balance") => {
@@ -103,164 +125,166 @@ const AgentManagement = () => {
           </Button>
         </div>
         {isLoading ? (
-           <div className="flex items-center justify-center">
+          <div className="flex items-center justify-center">
             <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
           </div>
-        ): (
-
-        <Card className="p-6">
-          <div className="flex flex-wrap items-center gap-4 mb-6">
-            {/* Status Filter */}
-            <div className="flex flex-wrap gap-2">
-              {["All", "Active", "Low Float"].map((status) => (
-                <Button
-                  key={status}
-                  variant={statusFilter === status ? "default" : "outline"}
-                  size="sm"
-                  className={
-                    statusFilter === status ? "bg-primary text-white" : ""
-                  }
-                  onClick={() => setStatusFilter(status as AgentStatus)}
-                >
-                  {status}
-                  <Badge variant="secondary" className="ml-2">
-                    {
-                      mockAgents.filter((a) =>
-                        status === "All" ? true : a.status === status
-                      ).length
+        ) : (
+          <Card className="p-6">
+            <div className="flex flex-wrap items-center gap-4 mb-6">
+              {/* Status Filter */}
+              <div className="flex flex-wrap gap-2">
+                {["All", "CASH_RICH", "LOW_E_FLOAT", "BALANCED"].map((status) => (
+                  <Button
+                    key={status}
+                    variant={statusFilter === status ? "default" : "outline"}
+                    size="sm"
+                    className={
+                      statusFilter === status ? "bg-primary text-white" : ""
                     }
-                  </Badge>
-                </Button>
-              ))}
-            </div>
-
-            {/* Search + Sort */}
-            <div className="ml-auto flex flex-col sm:flex-row  items-center gap-2">
-              <div className="relative ">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input
-                  placeholder="Search agents..."
-                  className="pl-9 w-64"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
+                    onClick={() => setStatusFilter(status as AgentStatus)}
+                  >
+                    {status}
+                    <Badge variant="secondary" className="ml-2">
+                      {
+                        filteredAgents?.filter((a) =>
+                          status === "All" ? true : a.status === status
+                        ).length
+                      }
+                    </Badge>
+                  </Button>
+                ))}
               </div>
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => handleSortChange("name")}
-                className="w-full"
-              >
-                Sort by {sortField}{" "}
-                <ChevronDown
-                  className={`ml-2 w-4 h-4 transform ${
-                    sortOrder === "desc" ? "rotate-180" : ""
-                  }`}
-                />
-              </Button>
-            </div>
-          </div>
+              {/* Search + Sort */}
+              <div className="ml-auto flex flex-col sm:flex-row  items-center gap-2">
+                <div className="relative ">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search agents..."
+                    className="pl-9 w-64"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Agent ID
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Region
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Float Balance
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Status
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Last Activity
-                  </th>
-                  <th className="w-10"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredAgents?.length === 0 && (
-                  <tr>
-                    <td colSpan={7} className="py-4 px-4 text-center">
-                      No agents found
-                    </td>
-                  </tr>
-                )}
-
-                {filteredAgents?.map((agent) => (
-                  <tr key={agent.id} className="border-b hover:bg-muted/50">
-                    <td className="py-4 px-4 text-sm">{agent.id}</td>
-                    <td className="py-4 px-4">
-                      <div>
-                        <div className="font-medium text-sm">{agent.name}</div>
-                        <div className="text-xs text-muted-foreground">
-                          Email
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-sm">{agent.region}</td>
-                    <td className="py-4 px-4 text-sm font-medium">
-                      {agent.balance}
-                    </td>
-                    <td className="py-4 px-4">
-                      <Badge
-                        variant={
-                          agent.status === "Active" ? "default" : "secondary"
-                        }
-                        className={
-                          agent.status === "Active"
-                            ? "bg-success hover:bg-success/90"
-                            : "bg-warning/20 text-warning hover:bg-warning/30"
-                        }
-                      >
-                        {agent.status}
-                      </Badge>
-                    </td>
-                    <td className="py-4 px-4 text-sm text-muted-foreground">
-                      {agent.lastActivity}
-                    </td>
-                    <td className="py-4 px-4">
-                      <Button
-                        onClick={() => setSelectedAgent(agent)}
-                        variant="ghost"
-                        size="sm"
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="flex items-center justify-between mt-6">
-            <div className="text-sm text-muted-foreground">Page 1 of 30</div>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5, 6].map((page) => (
                 <Button
-                  key={page}
-                  variant={page === 1 ? "default" : "outline"}
+                  variant="outline"
                   size="sm"
-                  className="w-8 h-8 p-0"
+                  onClick={() => handleSortChange("name")}
+                  className="w-full"
                 >
-                  {page}
+                  Sort by {sortField}{" "}
+                  <ChevronDown
+                    className={`ml-2 w-4 h-4 transform ${
+                      sortOrder === "desc" ? "rotate-180" : ""
+                    }`}
+                  />
                 </Button>
-              ))}
+              </div>
             </div>
-          </div>
-        </Card>
-        ) }
 
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b">
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Agent ID
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Name
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Region
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Float Balance
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                      Last Activity
+                    </th>
+                    <th className="w-10"></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredAgents?.length === 0 && (
+                    <tr>
+                      <td colSpan={7} className="py-4 px-4 text-center">
+                        No agents found
+                      </td>
+                    </tr>
+                  )}
+
+                  {filteredAgents?.map((agent) => (
+                    <tr key={agent.id} className="border-b hover:bg-muted/50">
+                      <td className="py-4 px-4 text-sm">{agent.id}</td>
+                      <td className="py-4 px-4">
+                        <div>
+                          <div className="font-medium text-sm">
+                            {agent.name}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {agent.email}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 text-sm">{agent.region}</td>
+                      <td className="py-4 px-4 text-sm font-medium">
+                        {agent.balance}
+                      </td>
+                      <td className="py-4 px-4">
+                        <Badge
+                          variant={
+                            agent.status === "Active" ? "default" : "secondary"
+                          }
+                          className={
+                            agent.status === "Active"
+                              ? "bg-success hover:bg-success/90"
+                              : "bg-warning/20 text-warning hover:bg-warning/30"
+                          }
+                        >
+                          {agent.status}
+                        </Badge>
+                      </td>
+                      <td className="py-4 px-4 text-sm text-muted-foreground">
+                        {agent.lastActivity}
+                      </td>
+                      <td className="py-4 px-4">
+                        <Button
+                          onClick={() => setSelectedAgent(agent)}
+                          variant="ghost"
+                          size="sm"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="flex items-center justify-between mt-6">
+              <div className="text-sm text-muted-foreground">
+                Page 1 of {filteredAgents?.length}
+              </div>
+              <div className="flex items-center gap-2">
+                {[1, 2].map((page) => (
+                  <Button
+                    key={page}
+                    variant={page === 1 ? "default" : "outline"}
+                    size="sm"
+                    className="w-8 h-8 p-0"
+                  >
+                    {page}
+                  </Button>
+                ))}
+              </div>
+            </div>
+          </Card>
+        )}
 
         {selectedAgent && (
           <>
@@ -295,7 +319,7 @@ const AgentManagement = () => {
 
                 <div className="flex items-center gap-2 text-sm">
                   <Mail className="w-4 h-4 text-muted-foreground" />
-                  agent@email.com
+                  {selectedAgent.email}
                 </div>
 
                 <div className="flex items-center gap-2 text-sm">
@@ -322,6 +346,44 @@ const AgentManagement = () => {
                   >
                     {selectedAgent.status}
                   </Badge>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-muted-foreground mb-1">Joined:</p>
+                  <p className="text-sm">{selectedAgent.joinedDate}</p>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <p className="text-sm text-muted-foreground mb-1">
+                    Commission Earned:
+                  </p>
+                  <p className="text-sm font-medium">
+                    {selectedAgent.commissionEarned}
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t">
+                  <h4 className="text-sm font-semibold mb-2">
+                    Recent Transactions
+                  </h4>
+                  {selectedAgent.recentTransactions?.length ? (
+                    selectedAgent.recentTransactions.map((txn) => (
+                      <div
+                        key={txn.id}
+                        className="flex justify-between text-sm border-b py-2"
+                      >
+                        <span>{txn.type}</span>
+                        <span>{txn.amount}</span>
+                        <span className="text-muted-foreground">
+                          {txn.status}
+                        </span>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      No transactions yet
+                    </p>
+                  )}
                 </div>
               </div>
 
