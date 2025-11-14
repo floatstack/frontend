@@ -41,3 +41,16 @@ export function generateAgentId(): string {
 
   return newId;
 }
+
+
+export function getInitials(name: string = ""): string {
+  if (!name.trim()) return "";
+
+  const parts = name.trim().split(" ");
+
+  if (parts.length === 1) {
+    return parts[0][0].toUpperCase(); // Single name: "Tunde" → "T"
+  }
+
+  return (parts[0][0] + parts[1][0]).toUpperCase(); // "Tunde Alabi" → "TA"
+}

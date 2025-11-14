@@ -9,6 +9,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { liquidAgents } from "@/lib/mockData";
 import { useEffect, useMemo, useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getInitials } from "@/lib/utils";
 
 
 
@@ -113,142 +114,149 @@ const filteredAgents = useMemo(() => {
           </div>
         ) : (
           <>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard
-            title="Total Number of Active Agent"
-            value="45,823"
-            trend="10%"
-          />
-          <StatCard title="Total Network Float" value="45,823" trend="10%" />
-          <StatCard title="Critical alert" value="45,823" trend="10%" />
-          <StatCard
-            title="Predicted Float Failures (Next 2 hrs)"
-            value="45,823"
-            trend="10%"
-          />
-        </div>
-
-        <Card className="p-6">
-          <div className="flex flex-wrap items-center justify-end gap-2 mb-6">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search agents..."
-                className="pl-9 w-64"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <StatCard
+                title="Total Number of Active Agent"
+                value="45,823"
+                trend="10%"
+              />
+              <StatCard
+                title="Total Network Float"
+                value="45,823"
+                trend="10%"
+              />
+              <StatCard title="Critical alert" value="45,823" trend="10%" />
+              <StatCard
+                title="Predicted Float Failures (Next 2 hrs)"
+                value="45,823"
+                trend="10%"
               />
             </div>
 
-            <Select onValueChange={setFilterStatus} value={filterStatus}>
-              <SelectTrigger className="w-36">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="All">All Status</SelectItem>
-                <SelectItem value="Cleared">Cleared</SelectItem>
-                <SelectItem value="Low Float">Low Float</SelectItem>
-                <SelectItem value="Critical">Critical</SelectItem>
-                <SelectItem value="Routed">Routed</SelectItem>
-              </SelectContent>
-            </Select>
+            <Card className="p-6">
+              <div className="flex flex-wrap items-center justify-end gap-2 mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search agents..."
+                    className="pl-9 w-64"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                </div>
 
-            <Select onValueChange={setSortBy} value={sortBy}>
-              <SelectTrigger className="w-40">
-                <ArrowUpDown className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Sort By" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="none">None</SelectItem>
-                <SelectItem value="name-asc">Name (A–Z)</SelectItem>
-                <SelectItem value="name-desc">Name (Z–A)</SelectItem>
-                <SelectItem value="balance-asc">
-                  Balance (Low → High)
-                </SelectItem>
-                <SelectItem value="balance-desc">
-                  Balance (High → Low)
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+                <Select onValueChange={setFilterStatus} value={filterStatus}>
+                  <SelectTrigger className="w-36">
+                    <Filter className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Filter" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="All">All Status</SelectItem>
+                    <SelectItem value="Cleared">Cleared</SelectItem>
+                    <SelectItem value="Low Float">Low Float</SelectItem>
+                    <SelectItem value="Critical">Critical</SelectItem>
+                    <SelectItem value="Routed">Routed</SelectItem>
+                  </SelectContent>
+                </Select>
 
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b">
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Agent ID
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Name
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Region
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Current Float
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
-                    Status
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredAgents?.map((agent) => (
-                  <tr key={agent.id} className="border-b hover:bg-muted/50">
-                    <td className="py-4 px-4 text-sm">{agent.id}</td>
-                    <td className="py-4 px-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar>
-                          <AvatarFallback>CN</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <div className="font-medium text-sm">
-                            {agent.name}
+                <Select onValueChange={setSortBy} value={sortBy}>
+                  <SelectTrigger className="w-40">
+                    <ArrowUpDown className="w-4 h-4 mr-2" />
+                    <SelectValue placeholder="Sort By" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="name-asc">Name (A–Z)</SelectItem>
+                    <SelectItem value="name-desc">Name (Z–A)</SelectItem>
+                    <SelectItem value="balance-asc">
+                      Balance (Low → High)
+                    </SelectItem>
+                    <SelectItem value="balance-desc">
+                      Balance (High → Low)
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b">
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Agent ID
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Name
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Region
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Current Float
+                      </th>
+                      <th className="text-left py-3 px-4 text-sm font-medium text-muted-foreground">
+                        Status
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredAgents?.map((agent) => (
+                      <tr key={agent.id} className="border-b hover:bg-muted/50">
+                        <td className="py-4 px-4 text-sm">{agent.id}</td>
+                        <td className="py-4 px-4">
+                          <div className="flex items-center gap-3">
+                            <Avatar>
+                              <AvatarFallback>
+                                {getInitials(agent.name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            <div>
+                              <div className="font-medium text-sm">
+                                {agent.name}
+                              </div>
+                              <div className="text-xs text-muted-foreground">
+                                {agent.email}
+                              </div>
+                            </div>
                           </div>
-                          <div className="text-xs text-muted-foreground">
-                            Email
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 text-sm">{agent.region}</td>
-                    <td className="py-4 px-4 text-sm font-medium">
-                      {agent.balance}
-                    </td>
-                    <td className="py-4 px-4">
-                      <Badge
-                        variant={getStatusVariant(agent.status)}
-                        className={getStatusClassName(agent.status)}
-                      >
-                        {agent.status}
-                      </Badge>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        </td>
+                        <td className="py-4 px-4 text-sm">{agent.region}</td>
+                        <td className="py-4 px-4 text-sm font-medium">
+                          {agent.balance}
+                        </td>
+                        <td className="py-4 px-4">
+                          <Badge
+                            variant={getStatusVariant(agent.status)}
+                            className={getStatusClassName(agent.status)}
+                          >
+                            {agent.status}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
 
-          <div className="flex items-center justify-between mt-6">
-            <div className="text-sm text-muted-foreground">Page 1 of 30</div>
-            <div className="flex items-center gap-2">
-              {[1, 2, 3, 4, 5, 6].map((page) => (
-                <Button
-                  key={page}
-                  variant={page === 1 ? "default" : "outline"}
-                  size="sm"
-                  className="w-8 h-8 p-0"
-                >
-                  {page}
-                </Button>
-              ))}
-            </div>
-          </div>
-        </Card>
+              <div className="flex items-center justify-between mt-6">
+                <div className="text-sm text-muted-foreground">
+                  Page 1 of {filteredAgents?.length}
+                </div>
+                <div className="flex items-center gap-2">
+                  {[1].map((page) => (
+                    <Button
+                      key={page}
+                      variant={page === 1 ? "default" : "outline"}
+                      size="sm"
+                      className="w-8 h-8 p-0"
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+            </Card>
           </>
-
         )}
       </div>
     </DashboardLayout>

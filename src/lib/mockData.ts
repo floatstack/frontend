@@ -144,14 +144,64 @@ export const mockAgents: AgentType[] = [
 
 
 export const liquidAgents = [
-  { id: "#1248", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Low Float" },
-  { id: "#8945", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Cleared" },
-  { id: "#8946", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Low Float" },
-  { id: "#8957", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Critical" },
-  { id: "#2945", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Routed" },
-  { id: "#5945", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Cleared" },
-  { id: "#2345", name: "Customer Name", region: "Lagos , Nigeria", balance: "₦5.63M", status: "Cleared" },
+  {
+    id: "#1248",
+    name: "Tunde Alabi",
+    email: "tunde.alabi@example.com",
+    region: "Lagos, Nigeria",
+    balance: "₦5.63M",
+    status: "Low Float",
+  },
+  {
+    id: "#8945",
+    name: "Ngozi Chukwu",
+    email: "ngozi.chukwu@example.com",
+    region: "Lagos, Nigeria",
+    balance: "₦5.63M",
+    status: "Cleared",
+  },
+  {
+    id: "#8946",
+    name: "Samuel Okoro",
+    email: "samuel.okoro@example.com",
+    region: "Lagos, Nigeria",
+    balance: "₦5.63M",
+    status: "Low Float",
+  },
+  {
+    id: "#8957",
+    name: "Fatima Mohammed",
+    email: "fatima.mohammed@example.com",
+    region: "Lagos, Nigeria",
+    balance: "₦5.63M",
+    status: "Critical",
+  },
+  {
+    id: "#2945",
+    name: "Damilola Adebayo",
+    email: "damilola.adebayo@example.com",
+    region: "Lagos, Nigeria",
+    balance: "₦5.63M",
+    status: "Routed",
+  },
+  {
+    id: "#5945",
+    name: "Ibrahim Abdullahi",
+    email: "ibrahim.abdullahi@example.com",
+    region: "Lagos, Nigeria",
+    balance: "₦5.63M",
+    status: "Cleared",
+  },
+  {
+    id: "#2345",
+    name: "Chiamaka Nwosu",
+    email: "chiamaka.nwosu@example.com",
+    region: "Lagos, Nigeria",
+    balance: "₦5.63M",
+    status: "Cleared",
+  },
 ];
+
 
 export const regionalData = [
   { name: "Lagos", value: 480 },
