@@ -63,6 +63,6 @@ export const useFetchAgent = () => {
       return response.data as BackendAgentResponse;
     },
     retry: 2,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 1 * 60 * 100,
   });
 };
