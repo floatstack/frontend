@@ -65,11 +65,11 @@ const AgentOnboarding = () => {
       // Simulate agent creation
       const newAgent: AgentType = {
         id: "#" + Math.floor(1000 + Math.random() * 9000).toString(),
-        name: fullName, 
+        name: fullName,
         email,
         region: `${selectedLga}, ${selectedState}`,
         balance: "₦200,000",
-        status: "Active",
+        status: "BALANCED",
         lastActivity: "Just now",
         joinedDate: new Date().toISOString().split("T")[0],
         phone,

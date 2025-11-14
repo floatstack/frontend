@@ -11,10 +11,10 @@ export const transformAgent = (agent: BackendAgent): AgentType => {
     id: agent.agent_id,
     name: agent.full_name,
     email: agent.email,
-    region: agent.region ?? "",
+    region: agent.region ?? "Lagos Island, Lagos",
     balance: `₦${agent.e_float.toLocaleString()}`,
     status: agent.status,
-    lastActivity: new Date(agent.last_activity).toLocaleString(),
+    lastActivity: new Date(agent.last_activity).toLocaleString() || new Date().toLocaleString(),
 
     // optional local fields
     joinedDate: new Date().toISOString(),
